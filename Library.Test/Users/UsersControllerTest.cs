@@ -15,8 +15,8 @@
             //  ARRANGE
             int expectedCount = 2;
             //  ACT
-            ActionResult<IEnumerable<UsersDto>> usersFromAPI = await _usersAPIController.GetUsers();
-            IEnumerable<UsersDto> users = (IEnumerable<UsersDto>)((Microsoft.AspNetCore.Mvc.ObjectResult)usersFromAPI.Result).Value;
+            var usersFromAPI = await _usersAPIController.GetUsers();
+            IEnumerable<UsersDto> users = usersFromAPI.Value;
             //  ASSERT
             Assert.True(users != null);
             Assert.That(users.Count(), Is.EqualTo(expectedCount));
@@ -29,7 +29,7 @@
             int id = 1;
             //  ACT
             var usersFromAPI = await _usersAPIController.GetUser(id);
-            UsersDto user = (UsersDto)((Microsoft.AspNetCore.Mvc.ObjectResult)usersFromAPI.Result).Value;
+            UsersDto user = usersFromAPI.Value;
             //  ASSERT
             Assert.True(user != null);
             Assert.That(user.Id, Is.EqualTo(id));
@@ -63,7 +63,7 @@
             //  ACT
             await _usersAPIController.InsertUser(modelToInsert);
             var usersFromAPI = await _usersAPIController.GetUser(modelToInsert.Id);
-            UsersDto user = (UsersDto)((Microsoft.AspNetCore.Mvc.ObjectResult)usersFromAPI.Result).Value;
+            UsersDto user = usersFromAPI.Value;
             //  ASSERT
             Assert.True(user != null);
             Assert.That(user.Id, Is.EqualTo(modelToInsert.Id));
