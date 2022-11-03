@@ -4,6 +4,9 @@ using System.Diagnostics;
 
 namespace AculocityPracticalInterview.Controllers
 {
+    /// <summary>
+    /// Home page controller
+    /// </summary>
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -19,6 +22,11 @@ namespace AculocityPracticalInterview.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Users()
         {
             return View();
         }

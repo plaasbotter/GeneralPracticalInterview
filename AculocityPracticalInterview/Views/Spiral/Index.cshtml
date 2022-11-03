@@ -1,0 +1,168 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="text-center border-1" id="div_template"></div>
+<div class="text-center" id="div_buttons"></div>
+
+<script>
+    let MAXBLOCKS = 22;
+
+    var button_decr = document.createElement("button");
+    button_decr.innerHTML = "<";
+    document.getElementById("div_buttons").appendChild(button_decr);
+
+    var text_box = document.createElement("label");
+    text_box.innerHTML = MAXBLOCKS;
+    document.getElementById("div_buttons").appendChild(text_box);
+
+    var button_incr = document.createElement("button");
+    button_incr.innerHTML = ">";
+    document.getElementById("div_buttons").appendChild(button_incr);
+
+    const WIDTH = 600;
+    const HEIGHT = 600;
+    const svg = d3.select("#div_template").append('svg').attr("width", WIDTH + 2).attr("height", HEIGHT + 2)
+    let MAX_GRID = 0;
+
+    svg.style('background-color', 'white');
+
+    var Tooltip = d3.select("#div_template")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "2px")
+        .style("border-radius", "5px")
+        .style("padding", "5px")
+
+    var mouseover = function (d) {
+        Tooltip
+            .style("opacity", 1)
+        d3.select(this)
+            .style("stroke", "black")
+            .style("opacity", 1)
+    }
+    var mousemove = function (d) {
+        Tooltip
+            .html("Value = " + d.value + "<br></br>" + "Colour = " + d.colour)
+            .style("left", (d3.mouse(this)[0] + 70) + "px")
+            .style("top", (d3.mouse(this)[1]) + "px")
+    }
+    var mouseleave = function (d) {
+        Tooltip
+            .style("opacity", 1)
+        d3.select(this)
+            .style("stroke", 1)
+            .style("opacity", 1)
+    }
+
+    const render = data => {
+        let block_width = Math.floor(WIDTH / MAX_GRID);
+        let block_height = Math.floor(HEIGHT / MAX_GRID);
+        d3.select('svg').selectAll('*').remove();
+        svg.selectAll('foo').data(data).enter().append("rect")
+            .attr("x", d => d.x_start * block_width + 1)
+            .attr("y", d => d.y_start * block_height + 1)
+            .attr("width", block_width)
+            .attr("height", block_height)
+            .attr("fill", d => d.colour)
+            .attr('stroke', 'black')
+            .attr('stroke-width', 2)
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave);
+
+        svg.selectAll('bar').data(data).enter().append("text")
+            .text(d => d.value)
+            .attr('x', d => d.x_start * block_width + (block_width / 2))
+            .attr('y', d => d.y_start * block_height + (block_height / 2))
+            .attr("text-anchor", "middle")
+            .attr("alignment-baseline", "central")
+            .style("font-size", WIDTH / Math.exp(MAX_GRID / Math.E))
+            .style("fill", "black");
+    };
+
+    const getdata = () => {
+        MAX_GRID = Math.ceil(Math.sqrt(MAXBLOCKS));
+        data = []
+        for (let x = 0; x < MAX_GRID; x++) {
+            array_to_push = []
+            for (let y = 0; y < MAX_GRID; y++) {
+                array_to_push.push({
+                    x_start: y,
+                    y_start: x,
+                    value: 0,
+                    colour: "rgb(255,255,255)",
+                });
+            }
+            data.push(array_to_push)
+        }
+        data_flat = []
+
+        let counter = MAX_GRID * MAX_GRID;
+        let x_pos = MAX_GRID - 1;
+        let y_pos = MAX_GRID - 1;
+        let x_direction = -1;
+        let y_direction = 0;
+        let x_new_pos = 0;
+        let y_new_pos = 0;
+        let sequence = d3.scaleSequential()
+            .interpolator(d3.interpolateSpectral)
+            .domain([0, MAXBLOCKS])
+        while (counter >= 1) {
+            if (counter > MAXBLOCKS) {
+                data[y_pos][x_pos].value = -1;
+            }
+            else {
+                data[y_pos][x_pos].value = counter;
+                if (counter % 2 == 1) {
+                    data[y_pos][x_pos].colour = sequence(counter);
+                }
+                data_flat.push(data[y_pos][x_pos])
+            }
+
+            x_new_pos = x_pos + x_direction;
+            y_new_pos = y_pos + y_direction;
+
+            if (x_direction == -1 && (x_new_pos == -1 || data[y_new_pos][x_new_pos].value != 0)) {
+                x_direction = 0;
+                y_direction = -1;
+            }
+            else if (x_direction == 1 && (x_new_pos == MAX_GRID || data[y_new_pos][x_new_pos].value != 0)) {
+                x_direction = 0;
+                y_direction = 1;
+            }
+            else if (y_direction == -1 && (y_new_pos == -1 || data[y_new_pos][x_new_pos].value != 0)) {
+                y_direction = 0;
+                x_direction = 1;
+            }
+            else if (y_direction == 1 && (y_new_pos == MAX_GRID || data[y_new_pos][x_new_pos].value != 0)) {
+                y_direction = 0;
+                x_direction = -1;
+            }
+            x_pos += x_direction;
+            y_pos += y_direction;
+            counter--;
+        }
+        return data_flat;
+    }
+
+    render(getdata());
+
+    button_decr.addEventListener("click", function () {
+        MAXBLOCKS--;
+        if (MAXBLOCKS <= 1){
+            MAXBLOCKS = 1
+        }
+        text_box.innerHTML = MAXBLOCKS;
+        render(getdata());
+    });
+
+    button_incr.addEventListener("click", function () {
+        MAXBLOCKS++;
+        text_box.innerHTML = MAXBLOCKS;
+        render(getdata());
+    });
+</script>

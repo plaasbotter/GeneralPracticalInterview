@@ -2,7 +2,40 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    <h1 class="display-4 text-center">Menu</h1>
+    <ul>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Users" asp-action="Index"><b>TASK1</b></a>
+            <p>
+                Basic user registration and filtered display.
+                Uses custom database interface, not entity framework.
+                Uses custom mapper, not automapper.
+                API routing is /api/users.
+                Each section has a dedicated folder for users. To add more items to the project, simply add more folders and implement interfaces.
+            </p>
+        </li>
+        <li>
+            <a class="nav-link" asp-area="" asp-controller="Spiral" asp-action="Index"><b>TASK2</b></a>
+            <p>
+                Javascript only spiral constructor. Please use greater than smaller than buttons to increase block size.
+            </p>
+        </li>
+        <li>
+            <a class="nav-link" href="https://perlin-path.web.app/"><b>BONUS</b></a>
+            <p>
+                Practical assessment that I designed and implemented for a company for front-end developers. 
+                Task is to implement a grid and use pathing algorythms to find the shortest distance.
+                Code is available on <a href="https://github.com/plaasbotter/PerlinPath">Github</a>.
+                Click on the grid to block a route.
+            </p>
+        </li>
+        <li>
+            <a><b>NOTES</b></a>
+            <p>
+                As requested, Task2 and Task3 was not completed, 
+                but the throughout the code, base classes and interfaces were used to implement concrete classes.
+            </p>
+        </li>
+    </ul>
 </div>
