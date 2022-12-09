@@ -1,4 +1,4 @@
-# AculocityPracticalInterview
+# GenericPracticalInterview
 
 # SQL SERVER
 
